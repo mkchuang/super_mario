@@ -34,3 +34,8 @@ const game = new Phaser.Game({
 window.addEventListener('resize', () => {
   game.scale.setZoom(integerZoom());
 });
+
+// dev-only：供 e2e 驗收腳本存取（production build 會移除）
+if (import.meta.env.DEV) {
+  (window as unknown as { __game: Phaser.Game }).__game = game;
+}
