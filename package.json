@@ -10,7 +10,7 @@
     "lint": "eslint src tests --no-error-on-unmatched-pattern",
     "format": "prettier --write src tests",
     "test": "vitest run --passWithNoTests",
-    "levels": "node scripts/gen-level.mjs"
+    "levels": "node scripts/design-levels.mjs && node scripts/gen-level.mjs && node scripts/lint-levels.mjs"
   },
   "repository": {
     "type": "git",

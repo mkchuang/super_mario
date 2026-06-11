@@ -77,7 +77,10 @@ export class LevelScene extends Phaser.Scene {
     this.bindGameState();
 
     // HUD overlay
-    this.scene.launch('hud', { displayName: this.levelDef.displayName });
+    this.scene.launch('hud', {
+      displayName: this.levelDef.displayName,
+      timeLimitSec: this.levelDef.timeLimitSec,
+    });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scene.stop('hud'));
   }
 

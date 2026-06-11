@@ -15,7 +15,7 @@ export class HudScene extends Phaser.Scene {
     super('hud');
   }
 
-  create(data: { displayName: string }): void {
+  create(data: { displayName: string; timeLimitSec: number }): void {
     const y = 4;
     this.scoreText = this.add.text(8, y, 'SCORE 000000', TEXT_STYLE);
     this.coinText = this.add.text(8, y + 10, 'x00', { ...TEXT_STYLE, color: '#ffd84d' });
@@ -29,9 +29,10 @@ export class HudScene extends Phaser.Scene {
     level.events.on('hud-refresh', this.refresh, this);
     level.events.on('time-tick', this.onTimeTick, this);
 
-    // HUD 晚於 level 場景啟動，初始值直接從 registry 拉
+    // HUD 晚於 level 場景啟動，初始值直接從 registry / launch data 拉
     const gs = this.registry.get('gameState') as { snapshot: GameStateData } | undefined;
     if (gs) this.refresh(gs.snapshot);
+    if (data.timeLimitSec) this.onTimeTick({ left: data.timeLimitSec });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       level.events.off('hud-refresh', this.refresh, this);
       level.events.off('time-tick', this.onTimeTick, this);
