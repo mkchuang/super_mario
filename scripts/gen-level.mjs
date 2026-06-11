@@ -37,6 +37,7 @@ const ENTITY_CHARS = {
   S: { type: 'question-block', content: 'star' },
   o: { type: 'coin' },
   g: { type: 'goomba' },
+  G: { type: 'goomba', edgeTurn: true },
   k: { type: 'koopa' },
   P: { type: 'player-spawn' },
 };
@@ -67,14 +68,10 @@ function compile(name) {
       const def = ENTITY_CHARS[ch];
       const base = { id: objId++, x: x * TILE, y: y * TILE, width: TILE, height: TILE };
       if (def) {
-        entities.push({
-          ...base,
-          name: def.type,
-          type: def.type,
-          properties: def.content
-            ? [{ name: 'content', type: 'string', value: def.content }]
-            : [],
-        });
+        const properties = [];
+        if (def.content) properties.push({ name: 'content', type: 'string', value: def.content });
+        if (def.edgeTurn) properties.push({ name: 'edgeTurn', type: 'bool', value: true });
+        entities.push({ ...base, name: def.type, type: def.type, properties });
       } else if (ch === 'D') {
         triggers.push({ ...base, name: 'flag', type: 'flag', properties: [] });
       } else {

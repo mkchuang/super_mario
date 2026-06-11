@@ -6,7 +6,9 @@ import {
   MAX_FALL_SPEED,
   COYOTE_TIME_MS,
   JUMP_BUFFER_MS,
+  STOMP_BOUNCE_VELOCITY,
 } from '../config/physics';
+import { DAMAGE_INVULN_MS } from '../config/game';
 import {
   stepHorizontal,
   shouldJump,
@@ -26,6 +28,7 @@ export class Player extends Entity {
   private jumpBufferMsLeft = 0;
   /** 本次跳躍是否已套用 cutoff（每次跳躍只截斷一次） */
   private jumpCutApplied = true;
+  private invulnMsLeft = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, FRAME.PLAYER_IDLE, TINT.PLAYER_SMALL);
@@ -74,7 +77,42 @@ export class Player extends Entity {
       this.jumpCutApplied = true;
     }
 
+    // 受傷無敵：計時 + 閃爍
+    if (this.invulnMsLeft > 0) {
+      this.invulnMsLeft = tickTimer(this.invulnMsLeft, dtMs);
+      this.setAlpha(Math.floor(this.invulnMsLeft / 80) % 2 === 0 ? 1 : 0.3);
+      if (this.invulnMsLeft === 0) this.setAlpha(1);
+    }
+
     this.updateVisual(onGround, body.velocity.x);
+  }
+
+  /** 踩踏敵人後反彈 */
+  bounceOffEnemy(): void {
+    this.arcade.setVelocityY(STOMP_BOUNCE_VELOCITY);
+    this.jumpCutApplied = true; // 反彈不受跳躍鍵 cutoff 影響
+  }
+
+  get isInvulnerable(): boolean {
+    return this.invulnMsLeft > 0;
+  }
+
+  /**
+   * 受傷：fire→super→small 降級（TASK-012 完整實作）；small → 死亡。
+   * 回傳是否實際受傷（無敵期間回傳 false）。
+   */
+  takeDamage(): boolean {
+    if (this.invulnMsLeft > 0) return false;
+    if (this.powerState === 'small') {
+      this.scene.sound.play('sfx-die', { volume: 0.6 });
+      this.scene.events.emit('player-died');
+      return true;
+    }
+    this.powerState = this.powerState === 'fire' ? 'super' : 'small';
+    this.invulnMsLeft = DAMAGE_INVULN_MS;
+    this.scene.sound.play('sfx-damage', { volume: 0.5 });
+    this.scene.events.emit('player-power-changed', { powerState: this.powerState });
+    return true;
   }
 
   private updateVisual(onGround: boolean, vx: number): void {
