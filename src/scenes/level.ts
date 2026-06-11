@@ -89,9 +89,25 @@ export class LevelScene extends Phaser.Scene {
     this.audio = new AudioSystem(this);
     this.audio.playBgm(this.levelDef.musicKey);
 
+    // 場景 restart 時 Phaser 不會清 scene.events 的 listener，但 groups/entities 會被
+    // destroy；殘留 listener 閉包會抓著已銷毀物件（曾導致頂磚 crash 凍結）並重複計分。
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.scene.stop('hud');
       this.audio.stopBgm();
+      for (const ev of [
+        'coin-collected',
+        'enemy-stomped',
+        'power-up-collected',
+        'brick-broken',
+        'player-power-changed',
+        'power-up-spawn',
+        'player-died',
+        'level-completed',
+        'hud-refresh',
+        'time-tick',
+      ]) {
+        this.events.off(ev);
+      }
     });
   }
 
