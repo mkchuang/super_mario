@@ -8,7 +8,8 @@ import {
   JUMP_BUFFER_MS,
   STOMP_BOUNCE_VELOCITY,
 } from '../config/physics';
-import { DAMAGE_INVULN_MS } from '../config/game';
+import { DAMAGE_INVULN_MS, STAR_DURATION_MS, SCORE_POWER_UP } from '../config/game';
+import type { PowerUpType } from './power-up';
 import {
   stepHorizontal,
   shouldJump,
@@ -29,6 +30,7 @@ export class Player extends Entity {
   /** 本次跳躍是否已套用 cutoff（每次跳躍只截斷一次） */
   private jumpCutApplied = true;
   private invulnMsLeft = 0;
+  private starMsLeft = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, FRAME.PLAYER_IDLE, TINT.PLAYER_SMALL);
@@ -84,6 +86,14 @@ export class Player extends Entity {
       if (this.invulnMsLeft === 0) this.setAlpha(1);
     }
 
+    // 無敵星：計時 + tint 循環
+    if (this.starMsLeft > 0) {
+      this.starMsLeft = tickTimer(this.starMsLeft, dtMs);
+      const cycle = [0xffffff, 0xffd84d, 0x9be7ff, 0xff7043];
+      this.setTint(cycle[Math.floor(Date.now() / 80) % cycle.length]!);
+      if (this.starMsLeft === 0) this.applyFormTint();
+    }
+
     this.updateVisual(onGround, body.velocity.x);
   }
 
@@ -97,22 +107,73 @@ export class Player extends Entity {
     return this.invulnMsLeft > 0;
   }
 
+  get isStarActive(): boolean {
+    return this.starMsLeft > 0;
+  }
+
+  get facing(): -1 | 1 {
+    return this.flipX ? -1 : 1;
+  }
+
   /**
-   * 受傷：fire→super→small 降級（TASK-012 完整實作）；small → 死亡。
-   * 回傳是否實際受傷（無敵期間回傳 false）。
+   * 受傷：fire→super→small 降級；small → 死亡。
+   * 回傳是否實際受傷（無敵/星星期間回傳 false）。
    */
   takeDamage(): boolean {
-    if (this.invulnMsLeft > 0) return false;
+    if (this.invulnMsLeft > 0 || this.starMsLeft > 0) return false;
     if (this.powerState === 'small') {
       this.scene.sound.play('sfx-die', { volume: 0.6 });
       this.scene.events.emit('player-died');
       return true;
     }
-    this.powerState = this.powerState === 'fire' ? 'super' : 'small';
+    this.setPowerState(this.powerState === 'fire' ? 'super' : 'small');
     this.invulnMsLeft = DAMAGE_INVULN_MS;
     this.scene.sound.play('sfx-damage', { volume: 0.5 });
-    this.scene.events.emit('player-power-changed', { powerState: this.powerState });
     return true;
+  }
+
+  /** 收集道具 */
+  applyPowerUp(type: PowerUpType): void {
+    if (type === 'star') {
+      this.starMsLeft = STAR_DURATION_MS;
+      this.scene.sound.play('sfx-star', { volume: 0.5 });
+    } else if (this.powerState === 'small') {
+      this.setPowerState('super'); // 蘑菇與火花對 small 都是升級為 super
+      this.scene.sound.play('sfx-power-up', { volume: 0.5 });
+    } else if (type === 'fire-flower' && this.powerState === 'super') {
+      this.setPowerState('fire');
+      this.scene.sound.play('sfx-power-up', { volume: 0.5 });
+    } else {
+      this.scene.sound.play('sfx-coin', { volume: 0.5 }); // 重複道具換分數
+    }
+    this.scene.events.emit('power-up-collected', { type, score: SCORE_POWER_UP });
+  }
+
+  /** 形態切換：tint + hitbox（super/fire 高 22px，small 14px） */
+  private setPowerState(next: PowerState): void {
+    const grow = this.powerState === 'small' && next !== 'small';
+    const shrink = this.powerState !== 'small' && next === 'small';
+    this.powerState = next;
+    this.applyFormTint();
+    if (grow) {
+      this.setScale(1, 1.5);
+      this.arcade.setSize(12, 15).setOffset(2, 1); // ×1.5 → 世界座標 12×22.5
+      this.y -= 4;
+    } else if (shrink) {
+      this.setScale(1, 1);
+      this.arcade.setSize(12, 14).setOffset(2, 2);
+    }
+    this.scene.events.emit('player-power-changed', { powerState: next });
+  }
+
+  private applyFormTint(): void {
+    const tint =
+      this.powerState === 'fire'
+        ? TINT.PLAYER_FIRE
+        : this.powerState === 'super'
+          ? TINT.PLAYER_SUPER
+          : TINT.PLAYER_SMALL;
+    this.setTint(tint);
   }
 
   private updateVisual(onGround: boolean, vx: number): void {

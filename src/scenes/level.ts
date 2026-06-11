@@ -10,6 +10,8 @@ import { Brick } from '../entities/brick';
 import { Enemy } from '../entities/enemy';
 import { Goomba } from '../entities/goomba';
 import { Koopa } from '../entities/koopa';
+import { PowerUp, type PowerUpType } from '../entities/power-up';
+import { Fireball } from '../entities/fireball';
 
 /**
  * Gameplay 場景：tilemap、碰撞層、Player 與攝影機。
@@ -20,6 +22,7 @@ export class LevelScene extends Phaser.Scene {
   private groundLayer!: Phaser.Tilemaps.TilemapLayer;
   private player!: Player;
   private inputSystem!: InputSystem;
+  private fireballs!: Phaser.Physics.Arcade.Group;
 
   constructor() {
     super('level');
@@ -94,6 +97,11 @@ export class LevelScene extends Phaser.Scene {
       const player = p as Player;
       const enemy = e as Enemy;
       if (enemy.isDead) return;
+      // 無敵星：接觸即消滅
+      if (player.isStarActive) {
+        enemy.defeat();
+        return;
+      }
       // 踩踏：玩家底部高於敵人中心且正在接觸下方
       const stomp = player.arcade.touching.down && player.arcade.bottom <= enemy.arcade.top + 8;
       if (stomp) {
@@ -108,9 +116,29 @@ export class LevelScene extends Phaser.Scene {
       player.takeDamage();
     });
 
-    // power-up 實體生成於 TASK-012
-    this.events.on('power-up-spawn', (e: { type: BlockContent; x: number; y: number }) => {
-      console.warn(`power-up-spawn 尚未實作（TASK-012）：${e.type}`);
+    // power-up：問號磚吐出 → 實體生成
+    const powerUps = this.physics.add.group();
+    this.physics.add.collider(powerUps, this.groundLayer);
+    this.physics.add.collider(powerUps, blocks);
+    this.physics.add.overlap(this.player, powerUps, (p, pu) => {
+      const powerUp = pu as PowerUp;
+      if (!powerUp.collectable) return;
+      (p as Player).applyPowerUp(powerUp.powerUpType);
+      powerUp.destroy();
+    });
+    this.events.on('power-up-spawn', (e: { type: PowerUpType; x: number; y: number }) => {
+      powerUps.add(new PowerUp(this, e.x, e.y, e.type));
+    });
+
+    // 火球（fire 形態，同時上限 2 顆）
+    this.fireballs = this.physics.add.group();
+    this.physics.add.collider(this.fireballs, this.groundLayer);
+    this.physics.add.collider(this.fireballs, blocks);
+    this.physics.add.overlap(this.fireballs, enemies, (f, e) => {
+      const enemy = e as Enemy;
+      if (enemy.isDead) return;
+      enemy.defeat();
+      (f as Fireball).pop();
     });
 
     this.events.on('player-died', () => this.respawn());
@@ -161,6 +189,17 @@ export class LevelScene extends Phaser.Scene {
 
   update(_time: number, dtMs: number): void {
     this.player.handleInput(this.inputSystem, dtMs);
+
+    // 攻擊：fire 形態發射火球
+    if (
+      this.inputSystem.attackPressed &&
+      this.player.powerState === 'fire' &&
+      this.fireballs.countActive(true) < 2
+    ) {
+      this.fireballs.add(
+        new Fireball(this, this.player.x + this.player.facing * 10, this.player.y, this.player.facing),
+      );
+    }
 
     // 掉出關卡底部：death（TASK-017 接 GameState；目前由 player-died 監聽重生）
     if (this.player.y > this.parsed.heightPx + 32) {
