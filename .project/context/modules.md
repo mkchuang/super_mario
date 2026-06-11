@@ -6,16 +6,16 @@
 
 ## 模組總覽
 
-> 來源：`plan-2026-06-11-mario-platformer-whole-project.md`「模組與介面邊界」；目前全部為規劃狀態，實作後由 develop / update-memory 升級為摘要/詳細。
+> 來源：`plan-2026-06-11-mario-platformer-whole-project.md`「模組與介面邊界」；Phase 1 已全數實作（2026-06-11）。
 
 | 模組 | 目錄 | 行為摘要 | 分析深度 | 最後更新 |
 |------|------|---------|---------|---------|
-| config | `src/config/` | 物理手感參數、TILE_SIZE 等幾何常數、5 關清單；零依賴 | 🗺️ 規劃 | 2026-06-11 |
-| state | `src/state/` | GameState 跨場景資料 + SaveManager（localStorage `save.v1`）；不依賴 Phaser | 🗺️ 規劃 | 2026-06-11 |
-| systems | `src/systems/` | movement 手感純函數、level-loader（Tiled JSON 解析）、audio、input | 🗺️ 規劃 | 2026-06-11 |
-| entities | `src/entities/` | Player、Goomba/Koopa、power-up、互動磚塊；以 EventEmitter 對外通訊 | 🗺️ 規劃 | 2026-06-11 |
-| scenes | `src/scenes/` | Boot/Preload/Title/Level/HUD/結算；唯一組裝層 | 🗺️ 規劃 | 2026-06-11 |
-| ui | `src/ui/` | HUD 文字/圖示元件 | 🗺️ 規劃 | 2026-06-11 |
+| config | `src/config/` | 物理手感參數（physics.ts）、TILE_SIZE/分數常數（game.ts）、5 關清單（levels.ts）、sprite frame/tint 映射（sprites.ts）；零依賴 | 📋 摘要 | 2026-06-11 |
+| state | `src/state/` | GameState（分數/金幣進位/命/關卡推進）+ SaveManager（`save.v1`、fallback）；不依賴 Phaser，13 單元測試 | 📋 摘要 | 2026-06-11 |
+| systems | `src/systems/` | movement 手感純函數（coyote/buffer/cutoff，14 測試）、level-loader（物件層解析，8 測試）、audio（程序生成 BGM）、input（鍵位抽象） | 📋 摘要 | 2026-06-11 |
+| entities | `src/entities/` | Entity/Enemy 基底、Player（形態機）、Goomba、Koopa（殼狀態機）、Coin、QuestionBlock、Brick、PowerUp、Fireball；scene events 對外通訊 | 📋 摘要 | 2026-06-11 |
+| scenes | `src/scenes/` | Boot/Preload/Title/Level（組裝核心）/HUD overlay/LevelComplete/GameOver | 📋 摘要 | 2026-06-11 |
+| 關卡工具 | `scripts/` | design-levels.mjs（segment builder）→ gen-level.mjs（ASCII→Tiled JSON）→ lint-levels.mjs（可玩性檢查） | 📋 摘要 | 2026-06-11 |
 
 > 分析深度：🗺️ 規劃（planner 產出，尚無代碼）| 📋 摘要（/analyze 產出）| 📖 詳細（/planner 深入分析後）
 

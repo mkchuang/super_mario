@@ -2,7 +2,7 @@
 
 > **設計日期**: 2026-06-11
 > **作者**: mk-chuang + Claude Code (claude-fable-5)
-> **狀態**: approved（2026-06-11，validate-plan WARN 修正後經使用者確認進入 breakdown）
+> **狀態**: implemented（Phase 1 於 2026-06-11 完成；TASK-001~024 全數驗收，已部署 https://mkchuang.github.io/super_mario/）
 > **設計類型**: whole-project
 > **任務規模**: L（全新專案、多模組、引入遊戲框架）
 > **Baseline 來源**: `.project/memory/project.md`（adf.design 2026-06-11 產出）

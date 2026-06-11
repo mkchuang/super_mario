@@ -52,9 +52,19 @@
 - [x] 完成專案定義（adf.design，2026-06-11）：經典 2D 平台遊戲、TypeScript + Phaser 3、Phase 1 = 完整小遊戲
 - [x] 未決問題全部定案（2026-06-11）：Kenney.nl 素材、GitHub Pages + Actions、5 關、git init 依機能分次提交
 - [x] adf.planner 產出 whole-project implementation plan + ADR-001（2026-06-11）
-- [x] validate-plan WARN-1~7 修正（conventions/tech-stack/modules 填實、TILE_SIZE、量化驗收、並行邊界）
-- [x] adf.breakdown 拆出 24 個 TASK（P0×22、P1×2），plan 標記 approved（2026-06-11）
-- [ ] 以 goal 模式自主開發 Phase 1：TASK-001 起依關鍵路徑推進
+- [x] validate-plan WARN-1~7 修正 + adf.breakdown 24 TASK（2026-06-11）
+- [x] **Phase 1 自主開發完成（2026-06-11）**：TASK-001~024 全數實作並驗收
+- [ ] 確認 GitHub Pages 部署上線（TASK-024 最後驗證）
+
+### 開發中的關鍵決策與偏差記錄
+| 決策/偏差 | 原因 |
+|------|------|
+| 素材改用 1-Bit Platformer Pack（非 Pixel Platformer） | Pixel Platformer 是 18×18，與 TILE_SIZE=16 衝突；plan 已預載「16×16 相容者優先」規則 |
+| 關卡以 ASCII + 產生器（scripts/design-levels.mjs → gen-level.mjs）製作 | 自主開發無法操作 Tiled GUI；輸出仍為 Tiled 相容 JSON，未脫離 data-driven 架構 |
+| BGM 程序生成 chiptune（Web Audio 自作曲） | CC0 loop 下載源不可靠；單色像素風適配；零授權風險 |
+| 旗桿以「門」視覺替代 | 素材包無旗桿；trigger type 仍為 flag，機制不變 |
+| jump cutoff bug 修正 | 原設計每幀重複套用；改一次性截斷（fix commit 3a0e9fd） |
+| 關卡通關驗證以 lint + 門可達 e2e 取代人工通關 | 自主環境無人工 playtest；風險：真人手感體驗未驗證，留待使用者試玩回饋 |
 
 ### 當前技術挑戰
 1. **挑戰 1**: [問題描述]
@@ -81,14 +91,13 @@
 
 | 模組 | 功能 | 開發狀態 | 驗證狀態 | 說明 |
 |------|------|----------|----------|------|
-| config | 物理參數/常數/關卡清單 | ⚫ 未開始 | ⚫ 未驗證 | TASK-004 |
-| state | GameState + SaveManager | ⚫ 未開始 | ⚫ 未驗證 | TASK-015 |
-| systems | movement/level-loader/audio/input | ⚫ 未開始 | ⚫ 未驗證 | TASK-005/006/021 |
-| entities | Player/敵人/power-up/磚塊 | ⚫ 未開始 | ⚫ 未驗證 | TASK-007~014 |
-| scenes | 場景流程 | ⚫ 未開始 | ⚫ 未驗證 | TASK-002/016/017 |
-| ui | HUD 元件 | ⚫ 未開始 | ⚫ 未驗證 | TASK-016 |
-| 關卡內容 | L0 測試關 + L1~L5 | ⚫ 未開始 | ⚫ 未驗證 | TASK-006/018~020 |
-| CI/CD | Actions + Pages | ⚫ 未開始 | ⚫ 未驗證 | TASK-023/024 |
+| config | 物理參數/常數/關卡清單/sprite 映射 | 🟢 已完成 | 🟢 驗證通過 | 零依賴確認 |
+| state | GameState + SaveManager | 🟢 已完成 | 🟢 13 單元測試 | save.v1 round-trip/fallback |
+| systems | movement/level-loader/audio/input | 🟢 已完成 | 🟢 22 單元測試 + e2e | movement 純函數、BGM 程序生成 |
+| entities | Player/Goomba/Koopa/power-up/磚塊/火球 | 🟢 已完成 | 🟢 Playwright 行為驗證 | 形態機/殼鏈/踩踏全過 |
+| scenes | Boot/Preload/Title/Level/HUD/結算/GameOver | 🟢 已完成 | 🟢 全流程 e2e | 5 關連續通關 + 全破 |
+| 關卡內容 | L0 + L1~L5（builder + lint） | 🟢 已完成 | 🟢 lint + in-game | 真人手感待玩家回饋 |
+| CI/CD | Actions CI + Pages deploy | 🟢 已完成 | 🟡 Pages 上線確認中 | configure-pages 自動啟用 |
 
 ### 狀態圖例
 - ⚫ **未開始**: 尚未開始開發/測試
