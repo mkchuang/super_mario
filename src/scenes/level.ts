@@ -15,7 +15,13 @@ import { Fireball } from '../entities/fireball';
 import { GameState } from '../state/game-state';
 import { AudioSystem } from '../systems/audio';
 import { FRAME, TINT } from '../config/sprites';
-import { SCORE_STOMP } from '../config/game';
+import {
+  SCORE_STOMP,
+  CAMERA_LOOKAHEAD_PX,
+  CAMERA_LERP_X,
+  CAMERA_TURN_COMMIT_MS,
+  CAMERA_OFFSET_SPEED,
+} from '../config/game';
 import type { PowerState } from '../state/types';
 
 /**
@@ -33,6 +39,11 @@ export class LevelScene extends Phaser.Scene {
   private timeLeftSec = 0;
   private timeAccumMs = 0;
   private ending = false;
+  // 前瞻攝影機狀態
+  private lookaheadX = 0;
+  private lookaheadTarget = 0;
+  private dirHeldMs = 0;
+  private lastDir = 0;
 
   constructor() {
     super('level');
@@ -73,9 +84,10 @@ export class LevelScene extends Phaser.Scene {
     this.spawnEntities();
     this.spawnTriggers();
 
-    // 攝影機跟隨：水平死區讓視野穩定
-    this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-    this.cameras.main.setDeadzone(48, 64);
+    // 攝影機跟隨：水平高 lerp + 速度比例前瞻（update 內調整 followOffset），
+    // 全速時玩家偏在畫面後側，前方視野加大；垂直保留死區避免跳躍晃動
+    this.cameras.main.startFollow(this.player, true, CAMERA_LERP_X, 0.1);
+    this.cameras.main.setDeadzone(8, 64);
 
     this.bindGameState();
 
@@ -147,6 +159,29 @@ export class LevelScene extends Phaser.Scene {
 
   private refreshHud(): void {
     this.events.emit('hud-refresh', this.gameState.snapshot);
+  }
+
+  /**
+   * 前瞻攝影機：持續同向移動超過 CAMERA_TURN_COMMIT_MS 才轉移前瞻方向，
+   * 偏移以固定速度滑動——短暫回頭不甩鏡頭（暈眩回饋修正）。
+   */
+  private updateCameraLookahead(dtMs: number): void {
+    const vx = this.player.arcade.velocity.x;
+    const dir = Math.abs(vx) > 40 ? Math.sign(vx) : 0;
+
+    if (dir !== 0 && dir === this.lastDir) {
+      this.dirHeldMs += dtMs;
+    } else {
+      this.dirHeldMs = 0;
+      this.lastDir = dir;
+    }
+    if (dir !== 0 && this.dirHeldMs >= CAMERA_TURN_COMMIT_MS) {
+      this.lookaheadTarget = -dir * CAMERA_LOOKAHEAD_PX;
+    }
+
+    const maxStep = (CAMERA_OFFSET_SPEED * dtMs) / 1000;
+    this.lookaheadX += Phaser.Math.Clamp(this.lookaheadTarget - this.lookaheadX, -maxStep, maxStep);
+    this.cameras.main.followOffset.x = this.lookaheadX;
   }
 
   /** 終點門（flag trigger） */
@@ -306,6 +341,8 @@ export class LevelScene extends Phaser.Scene {
   update(_time: number, dtMs: number): void {
     if (this.ending) return;
     this.player.handleInput(this.inputSystem, dtMs);
+
+    this.updateCameraLookahead(dtMs);
 
     // 攻擊：fire 形態發射火球
     if (
