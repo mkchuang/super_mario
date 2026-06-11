@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT, TILE_SIZE } from '../config/game';
 import { SHEET_KEY } from '../config/sprites';
-import { TEST_LEVEL } from '../config/levels';
+import { TEST_LEVEL, LEVEL_LIST } from '../config/levels';
 
 const SFX_KEYS = [
   'sfx-jump',
@@ -48,9 +48,12 @@ export class PreloadScene extends Phaser.Scene {
     }
 
     this.load.tilemapTiledJSON(TEST_LEVEL.key, TEST_LEVEL.tilemapPath);
+    for (const level of LEVEL_LIST) {
+      this.load.tilemapTiledJSON(level.key, level.tilemapPath);
+    }
   }
 
   create(): void {
-    this.scene.start('level');
+    this.scene.start('title');
   }
 }

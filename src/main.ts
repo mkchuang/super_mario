@@ -3,7 +3,11 @@ import { GAME_WIDTH, GAME_HEIGHT } from './config/game';
 import { GRAVITY_Y } from './config/physics';
 import { BootScene } from './scenes/boot';
 import { PreloadScene } from './scenes/preload';
+import { TitleScene } from './scenes/title';
 import { LevelScene } from './scenes/level';
+import { HudScene } from './scenes/hud';
+import { LevelCompleteScene } from './scenes/level-complete';
+import { GameOverScene } from './scenes/game-over';
 
 /** 整數倍縮放：在視窗內取最大整數 zoom，確保 pixel art 不模糊 */
 function integerZoom(): number {
@@ -28,7 +32,15 @@ const game = new Phaser.Game({
       debug: false,
     },
   },
-  scene: [BootScene, PreloadScene, LevelScene],
+  scene: [
+    BootScene,
+    PreloadScene,
+    TitleScene,
+    LevelScene,
+    HudScene,
+    LevelCompleteScene,
+    GameOverScene,
+  ],
 });
 
 window.addEventListener('resize', () => {

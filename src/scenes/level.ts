@@ -12,6 +12,10 @@ import { Goomba } from '../entities/goomba';
 import { Koopa } from '../entities/koopa';
 import { PowerUp, type PowerUpType } from '../entities/power-up';
 import { Fireball } from '../entities/fireball';
+import { GameState } from '../state/game-state';
+import { FRAME, TINT } from '../config/sprites';
+import { SCORE_STOMP } from '../config/game';
+import type { PowerState } from '../state/types';
 
 /**
  * Gameplay 場景：tilemap、碰撞層、Player 與攝影機。
@@ -23,6 +27,10 @@ export class LevelScene extends Phaser.Scene {
   private player!: Player;
   private inputSystem!: InputSystem;
   private fireballs!: Phaser.Physics.Arcade.Group;
+  private gameState!: GameState;
+  private timeLeftSec = 0;
+  private timeAccumMs = 0;
+  private ending = false;
 
   constructor() {
     super('level');
@@ -30,6 +38,7 @@ export class LevelScene extends Phaser.Scene {
 
   init(data: { level?: LevelDefinition }): void {
     this.levelDef = data.level ?? TEST_LEVEL;
+    this.ending = false;
   }
 
   create(): void {
@@ -59,10 +68,78 @@ export class LevelScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.groundLayer);
 
     this.spawnEntities();
+    this.spawnTriggers();
 
     // 攝影機跟隨：水平死區讓視野穩定
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
     this.cameras.main.setDeadzone(48, 64);
+
+    this.bindGameState();
+
+    // HUD overlay
+    this.scene.launch('hud', { displayName: this.levelDef.displayName });
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scene.stop('hud'));
+  }
+
+  private bindGameState(): void {
+    // 直接以 level 場景啟動（dev）時 registry 沒有 GameState → 建立預設
+    this.gameState =
+      (this.registry.get('gameState') as GameState | undefined) ?? new GameState();
+    this.registry.set('gameState', this.gameState);
+    this.gameState.setPowerState(this.player.powerState);
+
+    this.timeLeftSec = this.levelDef.timeLimitSec;
+    this.timeAccumMs = 0;
+
+    this.events.on('coin-collected', (e: { value: number }) => {
+      if (this.gameState.addCoin(e.value)) this.sound.play('sfx-one-up', { volume: 0.6 });
+      this.refreshHud();
+    });
+    this.events.on('enemy-stomped', (e: { score: number }) => {
+      this.gameState.addScore(e.score);
+      this.refreshHud();
+    });
+    this.events.on('power-up-collected', (e: { score: number }) => {
+      this.gameState.addScore(e.score);
+      this.refreshHud();
+    });
+    this.events.on('brick-broken', () => {
+      this.gameState.addScore(SCORE_STOMP / 2);
+      this.refreshHud();
+    });
+    this.events.on('player-power-changed', (e: { powerState: PowerState }) => {
+      this.gameState.setPowerState(e.powerState);
+    });
+
+    this.refreshHud();
+    this.events.emit('time-tick', { left: this.timeLeftSec });
+  }
+
+  private refreshHud(): void {
+    this.events.emit('hud-refresh', this.gameState.snapshot);
+  }
+
+  /** 終點門（flag trigger） */
+  private spawnTriggers(): void {
+    for (const t of this.parsed.triggers) {
+      if (t.type !== 'flag') continue;
+      this.add.image(t.x, t.y, 'tilesheet', FRAME.DOOR_EXIT).setTint(TINT.COIN);
+      const zone = this.add.zone(t.x, t.y, 16, 16);
+      this.physics.add.existing(zone, true);
+      this.physics.add.overlap(this.player, zone, () => this.completeLevel());
+    }
+  }
+
+  private completeLevel(): void {
+    if (this.ending) return;
+    this.ending = true;
+    this.sound.play('sfx-level-complete', { volume: 0.6 });
+    this.events.emit('level-completed', { timeLeft: this.timeLeftSec });
+    this.player.arcade.setVelocity(0, 0);
+    this.tweens.add({ targets: this.player, alpha: 0, duration: 400 });
+    this.time.delayedCall(700, () => {
+      this.scene.start('level-complete', { timeLeft: this.timeLeftSec });
+    });
   }
 
   private spawnEntities(): void {
@@ -141,14 +218,21 @@ export class LevelScene extends Phaser.Scene {
       (f as Fireball).pop();
     });
 
-    this.events.on('player-died', () => this.respawn());
+    this.events.on('player-died', () => this.onPlayerDied());
   }
 
-  private respawn(): void {
-    const spawn = findPlayerSpawn(this.parsed);
-    this.player.setPosition(spawn.x, spawn.y);
-    this.player.arcade.setVelocity(0, 0);
-    this.player.powerState = 'small';
+  /** 死亡：扣命 → 重開本關或 GameOver */
+  private onPlayerDied(): void {
+    if (this.ending) return;
+    this.ending = true;
+    this.player.arcade.enable = false;
+    this.tweens.add({ targets: this.player, alpha: 0, angle: 180, duration: 500 });
+    const livesLeft = this.gameState.loseLife();
+    this.refreshHud();
+    this.time.delayedCall(900, () => {
+      if (livesLeft > 0) this.scene.restart({ level: this.levelDef });
+      else this.scene.start('game-over');
+    });
   }
 
   private spawnEntity(
@@ -188,6 +272,7 @@ export class LevelScene extends Phaser.Scene {
   }
 
   update(_time: number, dtMs: number): void {
+    if (this.ending) return;
     this.player.handleInput(this.inputSystem, dtMs);
 
     // 攻擊：fire 形態發射火球
@@ -201,7 +286,19 @@ export class LevelScene extends Phaser.Scene {
       );
     }
 
-    // 掉出關卡底部：death（TASK-017 接 GameState；目前由 player-died 監聽重生）
+    // 倒數計時：歸零死亡
+    this.timeAccumMs += dtMs;
+    while (this.timeAccumMs >= 1000) {
+      this.timeAccumMs -= 1000;
+      this.timeLeftSec -= 1;
+      this.events.emit('time-tick', { left: this.timeLeftSec });
+      if (this.timeLeftSec <= 0) {
+        this.events.emit('player-died');
+        return;
+      }
+    }
+
+    // 掉出關卡底部：死亡
     if (this.player.y > this.parsed.heightPx + 32) {
       this.events.emit('player-died');
     }
