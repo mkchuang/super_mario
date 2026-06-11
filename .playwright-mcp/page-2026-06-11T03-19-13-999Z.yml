@@ -1,0 +1,135 @@
+- generic [active] [ref=e1]:
+  - link "Ready for a challenge? Create a game using our assets from June 17th to 19th! 🎉" [ref=e2] [cursor=pointer]:
+    - /url: https://itch.io/jam/kenney-jam-2026
+    - img [ref=e3]
+    - text: Ready for a challenge? Create a game using our assets from June 17th to 19th! 🎉
+  - generic [ref=e5]:
+    - generic:
+      - list:
+        - listitem [ref=e6]:
+          - link [ref=e7] [cursor=pointer]:
+            - /url: https://kenney.nl
+            - img [ref=e8]
+        - generic:
+          - listitem [ref=e9]:
+            - link "Games" [ref=e10] [cursor=pointer]:
+              - /url: https://kenney.nl/games
+          - listitem [ref=e11]:
+            - link "Tools" [ref=e12] [cursor=pointer]:
+              - /url: https://kenney.nl/tools
+          - listitem [ref=e13]:
+            - link "Assets" [ref=e14] [cursor=pointer]:
+              - /url: https://kenney.nl/assets
+          - listitem [ref=e15]:
+            - link "Starter Kits" [ref=e16] [cursor=pointer]:
+              - /url: https://kenney.nl/starter-kits
+    - generic:
+      - list:
+        - listitem [ref=e17]:
+          - link [ref=e18] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e19]
+        - listitem [ref=e20]:
+          - link "Donate" [ref=e21] [cursor=pointer]:
+            - /url: https://kenney.nl/donate
+    - generic:
+      - link "×" [ref=e22] [cursor=pointer]:
+        - /url: javascript:void(0)
+      - generic:
+        - link "Games" [ref=e23] [cursor=pointer]:
+          - /url: https://kenney.nl/games
+        - link "Tools" [ref=e24] [cursor=pointer]:
+          - /url: https://kenney.nl/tools
+        - link "Assets" [ref=e25] [cursor=pointer]:
+          - /url: https://kenney.nl/assets
+        - link "Starter Kits" [ref=e26] [cursor=pointer]:
+          - /url: https://kenney.nl/starter-kits
+      - separator [ref=e27]
+      - generic:
+        - link "Support" [ref=e28] [cursor=pointer]:
+          - /url: https://kenney.nl/support
+        - link "Knowledge Base" [ref=e29] [cursor=pointer]:
+          - /url: https://kenney.nl/knowledge-base
+        - link "Donate" [ref=e30] [cursor=pointer]:
+          - /url: https://kenney.nl/donate
+      - separator [ref=e31]
+      - link [ref=e32] [cursor=pointer]:
+        - /url: "#"
+        - img [ref=e33]
+  - generic [ref=e37]:
+    - generic [ref=e38]:
+      - heading "Pixel Platformer" [level=1] [ref=e39]
+      - paragraph
+      - table [ref=e40]:
+        - rowgroup [ref=e41]:
+          - row "Tags platformer pixel oopi" [ref=e42]:
+            - cell "Tags" [ref=e43]
+            - cell "platformer pixel oopi" [ref=e44]:
+              - link "platformer" [ref=e45] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/tag:platformer
+              - link "pixel" [ref=e46] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/tag:pixel
+              - link "oopi" [ref=e47] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/tag:oopi
+          - row "Category 2D • Pixel Platformer" [ref=e48]:
+            - cell "Category" [ref=e49]
+            - cell "2D • Pixel Platformer" [ref=e50]:
+              - link "2D" [ref=e51] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/category:2D
+              - text: •
+              - link "Pixel Platformer" [ref=e52] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/series:Pixel Platformer
+          - row "Tile size 18 × 18" [ref=e53]:
+            - cell "Tile size" [ref=e54]
+            - cell "18 × 18" [ref=e55]:
+              - link "18 × 18" [ref=e56] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/size:18
+          - row "Files 200×" [ref=e57]:
+            - cell "Files" [ref=e58]
+            - cell "200×" [ref=e59]
+          - row "License Creative Commons CC0" [ref=e60]:
+            - cell "License" [ref=e61]
+            - cell "Creative Commons CC0" [ref=e62]:
+              - link "Creative Commons CC0" [ref=e63] [cursor=pointer]:
+                - /url: https://creativecommons.org/publicdomain/zero/1.0/
+      - paragraph
+      - paragraph [ref=e64]:
+        - link "Download" [ref=e65] [cursor=pointer]:
+          - /url: "#inline-download"
+        - link "Get All-in-1 bundle" [ref=e66] [cursor=pointer]:
+          - /url: https://kenney.itch.io/kenney-game-assets
+      - paragraph
+      - table [ref=e67]:
+        - rowgroup [ref=e68]:
+          - row "1.2 Color adjustments, backgrounds" [ref=e69]:
+            - cell "1.2 Color adjustments, backgrounds" [ref=e70]:
+              - generic [ref=e71]: "1.2"
+              - text: Color adjustments, backgrounds
+          - row "1.0" [ref=e72]:
+            - cell "1.0" [ref=e73]:
+              - generic [ref=e74]: "1.0"
+      - paragraph
+    - generic [ref=e75]:
+      - link [ref=e78] [cursor=pointer]:
+        - /url: https://kenney.nl/media/pages/assets/pixel-platformer/9354b2aa6b-1696667871/preview.png
+        - img [ref=e79]
+      - generic [ref=e80]:
+        - link [ref=e82] [cursor=pointer]:
+          - /url: https://kenney.nl/media/pages/assets/pixel-platformer/bf585643f0-1696667860/samplea.png
+        - link [ref=e84] [cursor=pointer]:
+          - /url: https://kenney.nl/media/pages/assets/pixel-platformer/b6a81e5558-1696667866/sampleb.png
+  - contentinfo [ref=e85]:
+    - generic [ref=e87]: Copyright © 2010 - 2026 · All rights reserved
+    - generic [ref=e89]:
+      - link "Support" [ref=e90] [cursor=pointer]:
+        - /url: https://kenney.nl/support
+      - link "Knowledge Base" [ref=e91] [cursor=pointer]:
+        - /url: https://kenney.nl/knowledge-base
+      - link "Privacy Policy" [ref=e92] [cursor=pointer]:
+        - /url: https://kenney.nl/privacy-policy
+      - link "Terms of Service" [ref=e93] [cursor=pointer]:
+        - /url: https://kenney.nl/terms-of-service
+  - link "Get the Kenney plush! Limited time only" [ref=e94] [cursor=pointer]:
+    - /url: https://youtooz.com/products/kenney-plush-9-inch
+    - heading "Get the Kenney plush!" [level=1] [ref=e95]
+    - paragraph [ref=e96]: Limited time only

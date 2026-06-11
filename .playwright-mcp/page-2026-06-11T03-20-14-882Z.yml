@@ -1,0 +1,133 @@
+- generic [active] [ref=e1]:
+  - link "Get Kenney Game Assets All-in-1 to download everything at once, plus free updates!" [ref=e2] [cursor=pointer]:
+    - /url: https://kenney.itch.io/kenney-game-assets
+    - img [ref=e3]
+    - text: Get Kenney Game Assets All-in-1 to download
+    - emphasis [ref=e4]: everything
+    - text: at once, plus free updates!
+  - generic [ref=e6]:
+    - generic:
+      - list:
+        - listitem [ref=e7]:
+          - link [ref=e8] [cursor=pointer]:
+            - /url: https://kenney.nl
+            - img [ref=e9]
+        - generic:
+          - listitem [ref=e10]:
+            - link "Games" [ref=e11] [cursor=pointer]:
+              - /url: https://kenney.nl/games
+          - listitem [ref=e12]:
+            - link "Tools" [ref=e13] [cursor=pointer]:
+              - /url: https://kenney.nl/tools
+          - listitem [ref=e14]:
+            - link "Assets" [ref=e15] [cursor=pointer]:
+              - /url: https://kenney.nl/assets
+          - listitem [ref=e16]:
+            - link "Starter Kits" [ref=e17] [cursor=pointer]:
+              - /url: https://kenney.nl/starter-kits
+    - generic:
+      - list:
+        - listitem [ref=e18]:
+          - link [ref=e19] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e20]
+        - listitem [ref=e21]:
+          - link "Donate" [ref=e22] [cursor=pointer]:
+            - /url: https://kenney.nl/donate
+    - generic:
+      - link "×" [ref=e23] [cursor=pointer]:
+        - /url: javascript:void(0)
+      - generic:
+        - link "Games" [ref=e24] [cursor=pointer]:
+          - /url: https://kenney.nl/games
+        - link "Tools" [ref=e25] [cursor=pointer]:
+          - /url: https://kenney.nl/tools
+        - link "Assets" [ref=e26] [cursor=pointer]:
+          - /url: https://kenney.nl/assets
+        - link "Starter Kits" [ref=e27] [cursor=pointer]:
+          - /url: https://kenney.nl/starter-kits
+      - separator [ref=e28]
+      - generic:
+        - link "Support" [ref=e29] [cursor=pointer]:
+          - /url: https://kenney.nl/support
+        - link "Knowledge Base" [ref=e30] [cursor=pointer]:
+          - /url: https://kenney.nl/knowledge-base
+        - link "Donate" [ref=e31] [cursor=pointer]:
+          - /url: https://kenney.nl/donate
+      - separator [ref=e32]
+      - link [ref=e33] [cursor=pointer]:
+        - /url: "#"
+        - img [ref=e34]
+  - generic [ref=e38]:
+    - generic [ref=e39]:
+      - heading "1-Bit Platformer Pack" [level=1] [ref=e40]
+      - paragraph
+      - table [ref=e41]:
+        - rowgroup [ref=e42]:
+          - row "Tags 1-bit platformer character tile terrain pixel" [ref=e43]:
+            - cell "Tags" [ref=e44]
+            - cell "1-bit platformer character tile terrain pixel" [ref=e45]:
+              - link "1-bit" [ref=e46] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/tag:1-bit
+              - link "platformer" [ref=e47] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/tag:platformer
+              - link "character" [ref=e48] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/tag:character
+              - link "tile" [ref=e49] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/tag:tile
+              - link "terrain" [ref=e50] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/tag:terrain
+              - link "pixel" [ref=e51] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/tag:pixel
+          - row "Category 2D" [ref=e52]:
+            - cell "Category" [ref=e53]
+            - cell "2D" [ref=e54]:
+              - link "2D" [ref=e55] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/category:2D
+          - row "Tile size 16 × 16" [ref=e56]:
+            - cell "Tile size" [ref=e57]
+            - cell "16 × 16" [ref=e58]:
+              - link "16 × 16" [ref=e59] [cursor=pointer]:
+                - /url: https://kenney.nl/assets/size:16
+          - row "Files 400×" [ref=e60]:
+            - cell "Files" [ref=e61]
+            - cell "400×" [ref=e62]
+          - row "License Creative Commons CC0" [ref=e63]:
+            - cell "License" [ref=e64]
+            - cell "Creative Commons CC0" [ref=e65]:
+              - link "Creative Commons CC0" [ref=e66] [cursor=pointer]:
+                - /url: https://creativecommons.org/publicdomain/zero/1.0/
+      - paragraph
+      - paragraph [ref=e67]:
+        - link "Download" [ref=e68] [cursor=pointer]:
+          - /url: "#inline-download"
+        - link "Get All-in-1 bundle" [ref=e69] [cursor=pointer]:
+          - /url: https://kenney.itch.io/kenney-game-assets
+      - paragraph
+      - table [ref=e70]:
+        - rowgroup [ref=e71]:
+          - row "1.0" [ref=e72]:
+            - cell "1.0" [ref=e73]:
+              - generic [ref=e74]: "1.0"
+      - paragraph
+    - generic [ref=e75]:
+      - link [ref=e78] [cursor=pointer]:
+        - /url: https://kenney.nl/media/pages/assets/1-bit-platformer-pack/56f3b432d2-1677693067/preview.png
+        - img [ref=e79]
+      - link [ref=e82] [cursor=pointer]:
+        - /url: https://kenney.nl/media/pages/assets/1-bit-platformer-pack/99c0d1a156-1677693069/sample.png
+  - contentinfo [ref=e83]:
+    - generic [ref=e85]: Copyright © 2010 - 2026 · All rights reserved
+    - generic [ref=e87]:
+      - link "Support" [ref=e88] [cursor=pointer]:
+        - /url: https://kenney.nl/support
+      - link "Knowledge Base" [ref=e89] [cursor=pointer]:
+        - /url: https://kenney.nl/knowledge-base
+      - link "Privacy Policy" [ref=e90] [cursor=pointer]:
+        - /url: https://kenney.nl/privacy-policy
+      - link "Terms of Service" [ref=e91] [cursor=pointer]:
+        - /url: https://kenney.nl/terms-of-service
+  - link "Get the Kenney plush! Limited time only" [ref=e92] [cursor=pointer]:
+    - /url: https://youtooz.com/products/kenney-plush-9-inch
+    - heading "Get the Kenney plush!" [level=1] [ref=e93]
+    - paragraph [ref=e94]: Limited time only
