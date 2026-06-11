@@ -1,9 +1,12 @@
 import Phaser from 'phaser';
 import { SHEET_KEY, THEME_STYLE } from '../config/sprites';
 import { TEST_LEVEL, type LevelDefinition } from '../config/levels';
-import { parseLevel, findPlayerSpawn, type ParsedLevel } from '../systems/level-loader';
+import { parseLevel, findPlayerSpawn, type ParsedLevel, type SpawnDef } from '../systems/level-loader';
 import { InputSystem } from '../systems/input';
 import { Player } from '../entities/player';
+import { Coin } from '../entities/coin';
+import { QuestionBlock, type BlockContent } from '../entities/question-block';
+import { Brick } from '../entities/brick';
 
 /**
  * Gameplay 場景：tilemap、碰撞層、Player 與攝影機。
@@ -49,9 +52,57 @@ export class LevelScene extends Phaser.Scene {
     this.player = new Player(this, spawn.x, spawn.y);
     this.physics.add.collider(this.player, this.groundLayer);
 
+    this.spawnEntities();
+
     // 攝影機跟隨：水平死區讓視野穩定
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
     this.cameras.main.setDeadzone(48, 64);
+  }
+
+  private spawnEntities(): void {
+    const coins = this.physics.add.group({ allowGravity: false, immovable: true });
+    const blocks = this.physics.add.group({ allowGravity: false, immovable: true });
+
+    for (const s of this.parsed.spawns) {
+      this.spawnEntity(s, coins, blocks);
+    }
+
+    this.physics.add.overlap(this.player, coins, (_p, c) => (c as Coin).collect());
+    this.physics.add.collider(this.player, blocks, (p, b) => {
+      // 只有「從下方頂撞」觸發互動
+      const player = p as Player;
+      if (!player.arcade.touching.up) return;
+      if (b instanceof QuestionBlock) b.hit();
+      else if (b instanceof Brick) b.hit(player.powerState);
+    });
+
+    // power-up 實體生成於 TASK-012
+    this.events.on('power-up-spawn', (e: { type: BlockContent; x: number; y: number }) => {
+      console.warn(`power-up-spawn 尚未實作（TASK-012）：${e.type}`);
+    });
+  }
+
+  private spawnEntity(
+    s: SpawnDef,
+    coins: Phaser.Physics.Arcade.Group,
+    blocks: Phaser.Physics.Arcade.Group,
+  ): void {
+    switch (s.type) {
+      case 'coin':
+        coins.add(new Coin(this, s.x, s.y));
+        break;
+      case 'question-block':
+        blocks.add(new QuestionBlock(this, s.x, s.y, (s.props.content as BlockContent) ?? 'coin'));
+        break;
+      case 'brick':
+        blocks.add(new Brick(this, s.x, s.y));
+        break;
+      case 'player-spawn':
+        break; // 已於 create 處理
+      default:
+        // goomba / koopa 於 TASK-010/011 實作
+        break;
+    }
   }
 
   update(_time: number, dtMs: number): void {
