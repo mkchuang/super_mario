@@ -46,6 +46,7 @@ export class LevelScene extends Phaser.Scene {
   create(): void {
     const style = THEME_STYLE[this.levelDef.theme];
     this.cameras.main.setBackgroundColor(style.bgColor);
+    this.cameras.main.fadeIn(300, 0, 0, 0);
 
     const map = this.make.tilemap({ key: this.levelDef.key });
     const tileset = map.addTilesetImage('tilesheet', SHEET_KEY);
@@ -150,6 +151,7 @@ export class LevelScene extends Phaser.Scene {
     this.events.emit('level-completed', { timeLeft: this.timeLeftSec });
     this.player.arcade.setVelocity(0, 0);
     this.tweens.add({ targets: this.player, alpha: 0, duration: 400 });
+    this.cameras.main.fadeOut(600, 0, 0, 0);
     this.time.delayedCall(700, () => {
       this.scene.start('level-complete', { timeLeft: this.timeLeftSec });
     });
@@ -242,6 +244,7 @@ export class LevelScene extends Phaser.Scene {
     this.tweens.add({ targets: this.player, alpha: 0, angle: 180, duration: 500 });
     const livesLeft = this.gameState.loseLife();
     this.refreshHud();
+    this.cameras.main.fadeOut(700, 0, 0, 0);
     this.time.delayedCall(900, () => {
       if (livesLeft > 0) this.scene.restart({ level: this.levelDef });
       else this.scene.start('game-over');

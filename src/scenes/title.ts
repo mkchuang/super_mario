@@ -19,6 +19,7 @@ export class TitleScene extends Phaser.Scene {
 
   create(): void {
     this.cameras.main.setBackgroundColor(0x1a1a2e);
+    this.cameras.main.fadeIn(300, 0, 0, 0);
 
     this.add
       .text(GAME_WIDTH / 2, 56, 'SUPER MARIO', {
