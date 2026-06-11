@@ -14,13 +14,18 @@ import {
   tickTimer,
 } from '../systems/movement';
 import type { InputSystem } from '../systems/input';
+import type { PowerState } from '../state/types';
 
 const WALK_ANIM = 'player-walk';
 
 /** 玩家：input → movement 純函數 → Arcade body */
 export class Player extends Entity {
+  /** 形態狀態機完整實作於 TASK-012；目前供磚塊互動判斷 */
+  powerState: PowerState = 'small';
   private coyoteMsLeft = 0;
   private jumpBufferMsLeft = 0;
+  /** 本次跳躍是否已套用 cutoff（每次跳躍只截斷一次） */
+  private jumpCutApplied = true;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, FRAME.PLAYER_IDLE, TINT.PLAYER_SMALL);
@@ -59,11 +64,15 @@ export class Player extends Entity {
       body.setVelocityY(JUMP_VELOCITY);
       this.coyoteMsLeft = 0;
       this.jumpBufferMsLeft = 0;
+      this.jumpCutApplied = false;
       this.scene.sound.play('sfx-jump', { volume: 0.5 });
     }
 
-    // 可變跳躍高度
-    body.setVelocityY(applyJumpCutoff(body.velocity.y, sampled.jumpHeld));
+    // 可變跳躍高度：放開跳躍鍵時只截斷一次
+    if (!this.jumpCutApplied && !sampled.jumpHeld && body.velocity.y < 0) {
+      body.setVelocityY(applyJumpCutoff(body.velocity.y, sampled.jumpHeld));
+      this.jumpCutApplied = true;
+    }
 
     this.updateVisual(onGround, body.velocity.x);
   }
