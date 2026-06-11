@@ -64,6 +64,7 @@
 | BGM 程序生成 chiptune（Web Audio 自作曲） | CC0 loop 下載源不可靠；單色像素風適配；零授權風險 |
 | 旗桿以「門」視覺替代 | 素材包無旗桿；trigger type 仍為 flag，機制不變 |
 | jump cutoff bug 修正 | 原設計每幀重複套用；改一次性截斷（fix commit 3a0e9fd） |
+| **凍結 bug（玩家回報）修正** | scene.restart 不清 scene.events listener，殘留閉包抓已銷毀 group → 頂磚 TypeError 在 collider 迴圈中 → 物理崩壞凍結；另致計分翻倍。教訓：**Phaser scene 自註冊事件必須在 SHUTDOWN 清除**（HUD 已做、LevelScene 漏做） |
 | 關卡通關驗證以 lint + 門可達 e2e 取代人工通關 | 自主環境無人工 playtest；風險：真人手感體驗未驗證，留待使用者試玩回饋 |
 
 ### 當前技術挑戰
