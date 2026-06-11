@@ -4,14 +4,14 @@
 /** 重力加速度（pixels/s²） */
 export const GRAVITY_Y = 1200;
 
-/** 水平移動最高速（pixels/s） */
-export const RUN_SPEED_MAX = 200;
+/** 水平移動最高速（pixels/s）；玩家回饋調降 200→160 */
+export const RUN_SPEED_MAX = 160;
 
-/** 水平加速度（pixels/s²） */
-export const RUN_ACCEL = 800;
+/** 水平加速度（pixels/s²）；玩家回饋調降 800→480（0→滿速約 0.33s） */
+export const RUN_ACCEL = 480;
 
-/** 鬆鍵/反向時的減速度（pixels/s²） */
-export const RUN_DECEL = 1000;
+/** 鬆鍵/反向時的減速度（pixels/s²）；隨比例調降，維持煞車跟手 */
+export const RUN_DECEL = 800;
 
 /** 起跳初速（pixels/s，向上為負） */
 export const JUMP_VELOCITY = -460;
