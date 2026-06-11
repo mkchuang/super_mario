@@ -1,0 +1,1 @@
+plan-2026-06-11-mario-platformer-whole-project.md

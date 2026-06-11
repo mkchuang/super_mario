@@ -6,11 +6,18 @@
 
 ## 模組總覽
 
+> 來源：`plan-2026-06-11-mario-platformer-whole-project.md`「模組與介面邊界」；目前全部為規劃狀態，實作後由 develop / update-memory 升級為摘要/詳細。
+
 | 模組 | 目錄 | 行為摘要 | 分析深度 | 最後更新 |
 |------|------|---------|---------|---------|
-| [模組名] | [目錄] | [一句話描述] | 📋 摘要 | 2026-06-11 |
+| config | `src/config/` | 物理手感參數、TILE_SIZE 等幾何常數、5 關清單；零依賴 | 🗺️ 規劃 | 2026-06-11 |
+| state | `src/state/` | GameState 跨場景資料 + SaveManager（localStorage `save.v1`）；不依賴 Phaser | 🗺️ 規劃 | 2026-06-11 |
+| systems | `src/systems/` | movement 手感純函數、level-loader（Tiled JSON 解析）、audio、input | 🗺️ 規劃 | 2026-06-11 |
+| entities | `src/entities/` | Player、Goomba/Koopa、power-up、互動磚塊；以 EventEmitter 對外通訊 | 🗺️ 規劃 | 2026-06-11 |
+| scenes | `src/scenes/` | Boot/Preload/Title/Level/HUD/結算；唯一組裝層 | 🗺️ 規劃 | 2026-06-11 |
+| ui | `src/ui/` | HUD 文字/圖示元件 | 🗺️ 規劃 | 2026-06-11 |
 
-> 分析深度：📋 摘要（/analyze 產出）| 📖 詳細（/planner 深入分析後）
+> 分析深度：🗺️ 規劃（planner 產出，尚無代碼）| 📋 摘要（/analyze 產出）| 📖 詳細（/planner 深入分析後）
 
 ---
 

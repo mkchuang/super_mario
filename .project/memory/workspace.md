@@ -14,7 +14,7 @@
 |------|------|------|----------|
 | project.md | ✅ 已初始化 | ~200 行 | 2026-06-11 |
 | workspace.md | ✅ 已初始化 | - | 2026-06-11 |
-| current.md | ❌ 尚未建立 | - | 待 adf.planner |
+| current.md | ✅ 指向 whole-project plan（draft） | - | 2026-06-11 |
 
 ### 維護提醒
 - 當前文件大小：[行數]
@@ -38,11 +38,11 @@
 
 | 項目 | 內容 |
 |------|------|
-| **採用方案** | 尚未選定 |
-| **設計文件** | 待執行 /planner 後更新 |
-| **選定原因** | 待補充 |
-| **關鍵決策** | 待補充 |
-| **最後更新** | - |
+| **採用方案** | Phaser 3.90 + Arcade Physics + 手感補強薄層、Scene 狀態機、data-driven Tiled 關卡 |
+| **設計文件** | `.project/design/plan-2026-06-11-mario-platformer-whole-project.md`（current.md 已指向，狀態 draft 待批准） |
+| **選定原因** | 自主開發優先開發速度與框架成熟度；Phaser 4 僅釋出 2 個月不採用 |
+| **關鍵決策** | ADR-001（Phaser 3.90 pin + Arcade Physics）；256×240 邏輯解析度；save.v1 帶版本存檔 |
+| **最後更新** | 2026-06-11 |
 
 ---
 
@@ -51,8 +51,10 @@
 ### 本週主要任務
 - [x] 完成專案定義（adf.design，2026-06-11）：經典 2D 平台遊戲、TypeScript + Phaser 3、Phase 1 = 完整小遊戲
 - [x] 未決問題全部定案（2026-06-11）：Kenney.nl 素材、GitHub Pages + Actions、5 關、git init 依機能分次提交
-- [ ] 執行 adf.planner 產出 Phase 1 implementation plan
-- [ ] adf.breakdown 拆解 TASK 後以 goal 模式自主開發
+- [x] adf.planner 產出 whole-project implementation plan + ADR-001（2026-06-11）
+- [x] validate-plan WARN-1~7 修正（conventions/tech-stack/modules 填實、TILE_SIZE、量化驗收、並行邊界）
+- [x] adf.breakdown 拆出 24 個 TASK（P0×22、P1×2），plan 標記 approved（2026-06-11）
+- [ ] 以 goal 模式自主開發 Phase 1：TASK-001 起依關鍵路徑推進
 
 ### 當前技術挑戰
 1. **挑戰 1**: [問題描述]
@@ -79,8 +81,14 @@
 
 | 模組 | 功能 | 開發狀態 | 驗證狀態 | 說明 |
 |------|------|----------|----------|------|
-| 範例模組 1 | 待補充 | ⚫ 未開始 | ⚫ 未驗證 | - |
-| 範例模組 2 | 待補充 | ⚫ 未開始 | ⚫ 未驗證 | - |
+| config | 物理參數/常數/關卡清單 | ⚫ 未開始 | ⚫ 未驗證 | TASK-004 |
+| state | GameState + SaveManager | ⚫ 未開始 | ⚫ 未驗證 | TASK-015 |
+| systems | movement/level-loader/audio/input | ⚫ 未開始 | ⚫ 未驗證 | TASK-005/006/021 |
+| entities | Player/敵人/power-up/磚塊 | ⚫ 未開始 | ⚫ 未驗證 | TASK-007~014 |
+| scenes | 場景流程 | ⚫ 未開始 | ⚫ 未驗證 | TASK-002/016/017 |
+| ui | HUD 元件 | ⚫ 未開始 | ⚫ 未驗證 | TASK-016 |
+| 關卡內容 | L0 測試關 + L1~L5 | ⚫ 未開始 | ⚫ 未驗證 | TASK-006/018~020 |
+| CI/CD | Actions + Pages | ⚫ 未開始 | ⚫ 未驗證 | TASK-023/024 |
 
 ### 狀態圖例
 - ⚫ **未開始**: 尚未開始開發/測試

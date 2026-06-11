@@ -10,21 +10,23 @@
 
 | 語言 | 版本 | 用途 |
 |------|------|------|
-| TypeScript | 5.x（strict mode） | 主要語言，全部遊戲邏輯 |
+| TypeScript | 5.x 最新（strict mode；6.0.3 已釋出但暫不採用，待與工具鏈相容性成熟） | 主要語言，全部遊戲邏輯 |
 
 ## 框架與函式庫
 
 | 名稱 | 版本 | 用途 |
 |------|------|------|
-| Phaser | 3.x 最新穩定版 | 遊戲框架：rendering、Arcade Physics、audio、input、tilemap |
+| Phaser | **3.90.0（exact pin）** | 遊戲框架：rendering、Arcade Physics、audio、input、tilemap（選型見 ADR-001） |
 
 ## 建置工具
 
+> 版本於 2026-06-11 以 `npm view <pkg> version` 查證；S0 安裝後以 `package-lock.json` pin，升級需明確決策。
+
 | 工具 | 版本 | 用途 |
 |------|------|------|
-| Vite | 最新穩定版 | dev server 與 production bundle |
-| Vitest | 最新穩定版 | 邏輯層單元測試 |
-| ESLint + Prettier | 最新穩定版 | Lint 與格式化 |
+| Vite | 8.x（查證時 8.0.16） | dev server 與 production bundle |
+| Vitest | 4.x（查證時 4.1.8） | 邏輯層單元測試 |
+| ESLint + Prettier | 最新穩定版（lockfile pin） | Lint 與格式化 |
 | Tiled Map Editor | 1.x | 關卡編輯（輸出 JSON，非 build 依賴） |
 
 ## 目標平台
