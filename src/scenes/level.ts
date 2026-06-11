@@ -13,6 +13,7 @@ import { Koopa } from '../entities/koopa';
 import { PowerUp, type PowerUpType } from '../entities/power-up';
 import { Fireball } from '../entities/fireball';
 import { GameState } from '../state/game-state';
+import { AudioSystem } from '../systems/audio';
 import { FRAME, TINT } from '../config/sprites';
 import { SCORE_STOMP } from '../config/game';
 import type { PowerState } from '../state/types';
@@ -28,6 +29,7 @@ export class LevelScene extends Phaser.Scene {
   private inputSystem!: InputSystem;
   private fireballs!: Phaser.Physics.Arcade.Group;
   private gameState!: GameState;
+  private audio!: AudioSystem;
   private timeLeftSec = 0;
   private timeAccumMs = 0;
   private ending = false;
@@ -81,7 +83,15 @@ export class LevelScene extends Phaser.Scene {
       displayName: this.levelDef.displayName,
       timeLimitSec: this.levelDef.timeLimitSec,
     });
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scene.stop('hud'));
+
+    // BGM（依 theme，data-driven）
+    this.audio = new AudioSystem(this);
+    this.audio.playBgm(this.levelDef.musicKey);
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.scene.stop('hud');
+      this.audio.stopBgm();
+    });
   }
 
   private bindGameState(): void {
@@ -295,6 +305,7 @@ export class LevelScene extends Phaser.Scene {
       this.timeAccumMs -= 1000;
       this.timeLeftSec -= 1;
       this.events.emit('time-tick', { left: this.timeLeftSec });
+      if (this.timeLeftSec === 60) this.audio.setHurry(true);
       if (this.timeLeftSec <= 0) {
         this.events.emit('player-died');
         return;

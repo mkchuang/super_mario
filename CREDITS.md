@@ -34,7 +34,8 @@
 
 ## BGM
 
-待 TASK-021 補充（候選：OpenGameArt CC0 chiptune loop，引入時更新此表）。
+BGM 為**程序生成 chiptune**（`src/systems/audio.ts`，Web Audio square/triangle 振盪器即時合成，
+本專案自作曲），無外部音樂資產、無授權限制。三個 theme 各一首 16 步循環。
 
 ## 視覺替代說明
 
