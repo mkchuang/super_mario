@@ -19,6 +19,10 @@ coverage/
 # Logs
 *.log
 
+# 驗收用截圖與 Playwright 暫存
+.playwright-mcp/
+task-*.png
+
 # Local env
 .env
 .env.local

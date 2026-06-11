@@ -9,10 +9,10 @@ export const SHEET_COLS = 20;
 
 /** tile / 地形 */
 export const FRAME = {
-  GROUND: 10,
-  QUESTION_BLOCK: 6,
-  QUESTION_EMPTY: 8,
-  BRICK: 9,
+  GROUND: 11,
+  QUESTION_BLOCK: 7,
+  QUESTION_EMPTY: 9,
+  BRICK: 10,
 
   COIN: 2,
   COIN_SMALL: 1,
@@ -22,27 +22,28 @@ export const FRAME = {
   HEART_1UP: 42,
 
   DOOR_EXIT: 56, // 門替代旗桿（過關觸發點）
-  DOOR_OPEN: 57,
+  DOOR_OPEN: 58,
 
-  /** 玩家：row 12 行走、row 13 跳躍姿勢 */
-  PLAYER_IDLE: 240,
-  PLAYER_WALK_0: 240,
-  PLAYER_WALK_1: 241,
-  PLAYER_WALK_2: 242,
-  PLAYER_WALK_3: 243,
-  PLAYER_JUMP: 261,
+  /** 玩家：觸角小機器人（row 13），行走 260-263、跳躍 264 */
+  PLAYER_IDLE: 260,
+  PLAYER_WALK_0: 260,
+  PLAYER_WALK_1: 261,
+  PLAYER_WALK_2: 262,
+  PLAYER_WALK_3: 263,
+  PLAYER_JUMP: 264,
 
-  /** Goomba（圓臉敵人，row 16） */
+  /** Goomba（圓臉敵人，row 16）；壓扁以 scaleY 表現 */
   GOOMBA_WALK_0: 320,
   GOOMBA_WALK_1: 321,
-  GOOMBA_SQUASHED: 324,
+  GOOMBA_SQUASHED: 320,
 
   /** Koopa（殼層敵人，row 18） */
   KOOPA_WALK_0: 360,
   KOOPA_WALK_1: 361,
   KOOPA_SHELL: 365,
 
-  FIREBALL: 325,
+  /** 小寶石替代火球 */
+  FIREBALL: 20,
 } as const;
 
 /** 單色素材的 tint 配色 */
