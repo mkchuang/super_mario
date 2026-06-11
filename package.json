@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests --no-error-on-unmatched-pattern",
     "format": "prettier --write src tests",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "levels": "node scripts/gen-level.mjs"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT, TILE_SIZE } from '../config/game';
 import { SHEET_KEY } from '../config/sprites';
+import { TEST_LEVEL } from '../config/levels';
 
 const SFX_KEYS = [
   'sfx-jump',
@@ -45,6 +46,8 @@ export class PreloadScene extends Phaser.Scene {
     for (const key of SFX_KEYS) {
       this.load.audio(key, `audio/${key}.ogg`);
     }
+
+    this.load.tilemapTiledJSON(TEST_LEVEL.key, TEST_LEVEL.tilemapPath);
   }
 
   create(): void {

@@ -1,50 +1,52 @@
 import Phaser from 'phaser';
-import { GAME_WIDTH, GAME_HEIGHT } from '../config/game';
-import { SHEET_KEY, FRAME, TINT, THEME_STYLE } from '../config/sprites';
+import { SHEET_KEY, THEME_STYLE } from '../config/sprites';
+import { TEST_LEVEL, type LevelDefinition } from '../config/levels';
+import { parseLevel, type ParsedLevel } from '../systems/level-loader';
 
 /**
- * Gameplay 場景。
- * 目前為 TASK-002 骨架：顯示底色、版本字樣與素材 smoke test；
- * TASK-006/007 將加入 tilemap 與 Player。
+ * Gameplay 場景：載入 tilemap、建立碰撞層。
+ * TASK-006：tilemap 渲染與 ground 碰撞；TASK-007 加入 Player。
  */
 export class LevelScene extends Phaser.Scene {
+  private levelDef: LevelDefinition = TEST_LEVEL;
+  private parsed!: ParsedLevel;
+  private groundLayer!: Phaser.Tilemaps.TilemapLayer;
+
   constructor() {
     super('level');
   }
 
+  init(data: { level?: LevelDefinition }): void {
+    this.levelDef = data.level ?? TEST_LEVEL;
+  }
+
   create(): void {
-    this.cameras.main.setBackgroundColor(THEME_STYLE.overworld.bgColor);
+    const style = THEME_STYLE[this.levelDef.theme];
+    this.cameras.main.setBackgroundColor(style.bgColor);
 
-    this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 3, 'SUPER MARIO', {
-        fontFamily: 'monospace',
-        fontSize: '16px',
-        color: '#ffffff',
-      })
-      .setOrigin(0.5);
-    this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 3 + 20, 'v0.1.0 — TASK-002', {
-        fontFamily: 'monospace',
-        fontSize: '8px',
-        color: '#9be7ff',
-      })
-      .setOrigin(0.5);
+    const map = this.make.tilemap({ key: this.levelDef.key });
+    const tileset = map.addTilesetImage('tilesheet', SHEET_KEY);
+    if (!tileset) throw new Error(`tileset 載入失敗：${this.levelDef.key}`);
 
-    // 素材 smoke test：spritesheet 載入正確即可看到上色後的角色與道具
-    const frames = [
-      { frame: FRAME.PLAYER_IDLE, tint: TINT.PLAYER_SMALL },
-      { frame: FRAME.GOOMBA_WALK_0, tint: TINT.GOOMBA },
-      { frame: FRAME.KOOPA_WALK_0, tint: TINT.KOOPA },
-      { frame: FRAME.COIN, tint: TINT.COIN },
-      { frame: FRAME.QUESTION_BLOCK, tint: TINT.QUESTION },
-      { frame: FRAME.BRICK, tint: TINT.BRICK },
-      { frame: FRAME.MUSHROOM, tint: TINT.MUSHROOM },
-      { frame: FRAME.GROUND, tint: THEME_STYLE.overworld.groundTint },
-    ];
-    frames.forEach(({ frame, tint }, i) => {
-      this.add
-        .image(GAME_WIDTH / 2 + (i - (frames.length - 1) / 2) * 24, GAME_HEIGHT * 0.65, SHEET_KEY, frame)
-        .setTint(tint);
-    });
+    const ground = map.createLayer('ground', tileset, 0, 0);
+    if (!ground) throw new Error(`ground layer 建立失敗：${this.levelDef.key}`);
+    this.groundLayer = ground;
+    this.groundLayer.setTint(style.groundTint);
+    this.groundLayer.setCollisionByProperty({ collides: true });
+
+    this.parsed = parseLevel(this.cache.tilemap.get(this.levelDef.key).data);
+
+    this.physics.world.setBounds(0, 0, this.parsed.widthPx, this.parsed.heightPx);
+    this.cameras.main.setBounds(0, 0, this.parsed.widthPx, this.parsed.heightPx);
+  }
+
+  /** 給後續 task 取用：碰撞層 */
+  get terrain(): Phaser.Tilemaps.TilemapLayer {
+    return this.groundLayer;
+  }
+
+  /** 給後續 task 取用：解析後的關卡資料 */
+  get levelData(): ParsedLevel {
+    return this.parsed;
   }
 }
