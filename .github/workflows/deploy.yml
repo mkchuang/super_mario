@@ -18,6 +18,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Pages 若被設成 branch 模式會直接 serve 原始碼（白畫面）；強制切回 workflow 模式
+      - name: Force Pages build_type to workflow
+        continue-on-error: true
+        run: |
+          curl -sf -X PUT \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages" \
+            -d '{"build_type":"workflow"}' || echo "PUT pages failed（可能需手動切換 Settings→Pages→Source=GitHub Actions）"
       - uses: actions/configure-pages@v5
         with:
           enablement: true
